@@ -4,33 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Auto-Login QR Generator</title>
-    
+
     <!-- Load Tailwind CSS for modern, responsive styling -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
+
     <!-- Load QRCode.js for generating the QR code -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
     <style>
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI",
+                         "PingFang TC", "Microsoft JhengHei", "Noto Sans TC",
+                         Roboto, Helvetica, Arial, sans-serif;
             background-color: #f8fafc;
             background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
             background-size: 20px 20px;
         }
-        
-        /* 
-           CRITICAL FIX: Hide native browser password reveal/clear buttons 
-           (Microsoft Edge, Internet Explorer, Chrome extension injected buttons) 
-           so only our single custom toggle eye icon appears.
-        */
+
+        /* Hide native browser password reveal/clear buttons so only our custom eye icon appears */
         input::-ms-reveal,
         input::-ms-clear {
             display: none !important;
             width: 0 !important;
             height: 0 !important;
         }
-        
+
         input::-webkit-contacts-auto-fill-button,
         input::-webkit-credentials-auto-fill-button {
             visibility: hidden !important;
@@ -52,54 +50,62 @@
 <body class="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 text-gray-800">
 
     <div class="w-full max-w-md bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden transition-all duration-300">
-        
+
         <!-- Header Section -->
-        <div class="bg-gradient-to-r from-blue-600 to-indigo-600 p-6 text-white text-center">
-            <h1 class="text-2xl font-bold tracking-tight mb-1">Quick Login QR</h1>
-            <p class="text-blue-100 text-xs sm:text-sm">Generate scanner-ready credentials</p>
+        <div class="relative bg-gradient-to-r from-blue-600 to-indigo-600 p-6 text-white text-center">
+
+            <!-- Language Switcher: [中/ENG], active language is emphasized -->
+            <button type="button" id="langToggle" title="Switch language / 切換語言"
+                class="absolute top-3 right-3 inline-flex items-center rounded-full bg-white/20 hover:bg-white/30 active:scale-95 px-3 py-1.5 text-[11px] text-white transition-all duration-200 backdrop-blur-sm focus:outline-none">
+                <span id="langZh">中</span>
+                <span class="mx-1 opacity-50">/</span>
+                <span id="langEn">ENG</span>
+            </button>
+
+            <h1 data-i18n="headerTitle" class="text-2xl font-bold tracking-tight mb-1 px-14">Quick Login QR</h1>
+            <p data-i18n="headerSubtitle" class="text-blue-100 text-xs sm:text-sm">Generate scanner-ready credentials</p>
         </div>
 
         <div class="p-6 space-y-5">
-            
+
             <!-- User ID Input -->
             <div class="space-y-1.5">
-                <label for="idInput" class="block text-xs font-bold uppercase tracking-wider text-slate-600">User ID</label>
+                <label for="idInput" data-i18n="labelUserId" class="block text-xs font-bold uppercase tracking-wider text-slate-600">User ID</label>
                 <div class="relative">
                     <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
                         </svg>
                     </div>
-                    <input type="text" id="idInput" placeholder="Enter User ID" autocomplete="off" 
+                    <input type="text" id="idInput" data-i18n-placeholder="placeholderUserId" placeholder="Enter User ID" autocomplete="off"
                         class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white border-transparent outline-none transition-all duration-200 text-slate-800 placeholder-slate-400 text-sm">
                 </div>
             </div>
 
             <!-- Password Input -->
             <div class="space-y-1.5">
-                <label for="passwordInput" class="block text-xs font-bold uppercase tracking-wider text-slate-600">Password</label>
+                <label for="passwordInput" data-i18n="labelPassword" class="block text-xs font-bold uppercase tracking-wider text-slate-600">Password</label>
                 <div class="relative">
                     <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
                         </svg>
                     </div>
-                    
-                    <!-- Password Field (Default password input type) -->
-                    <input type="password" id="passwordInput" placeholder="Enter Password" autocomplete="new-password"
+
+                    <input type="password" id="passwordInput" data-i18n-placeholder="placeholderPassword" placeholder="Enter Password" autocomplete="new-password"
                         class="w-full pl-10 pr-12 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white border-transparent outline-none transition-all duration-200 text-slate-800 placeholder-slate-400 text-sm">
-                    
-                    <!-- Single Custom Password Visibility Toggle Button -->
-                    <button type="button" id="togglePasswordBtn" title="Toggle password visibility"
+
+                    <!-- Custom Password Visibility Toggle Button -->
+                    <button type="button" id="togglePasswordBtn" data-i18n-title="togglePassword" title="Toggle password visibility"
                         class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 focus:outline-none transition-colors">
-                        
-                        <!-- Eye Open Icon (Shows when password is plain text) -->
+
+                        <!-- Eye Open Icon -->
                         <svg id="eyeOpen" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                         </svg>
-                        
-                        <!-- Eye Off / Closed Icon (Shows when password is hidden) -->
+
+                        <!-- Eye Closed Icon -->
                         <svg id="eyeClosed" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
                         </svg>
@@ -110,10 +116,10 @@
             <!-- QR Display Section -->
             <div class="pt-3 border-t border-slate-100">
                 <div class="flex justify-between items-center mb-3">
-                    <span class="text-xs font-bold uppercase tracking-wider text-slate-400">QR Code Preview</span>
+                    <span data-i18n="qrPreviewLabel" class="text-xs font-bold uppercase tracking-wider text-slate-400">QR Code Preview</span>
                     <span id="charCount" class="text-xs text-slate-400 font-mono">0 chars</span>
                 </div>
-                
+
                 <div class="flex flex-col items-center justify-center bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl p-5 min-h-[220px] transition-all">
                     <div id="qrcode" class="flex flex-col items-center justify-center w-full">
                         <!-- Placeholder when inputs are empty -->
@@ -121,35 +127,35 @@
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 mx-auto mb-2 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4" />
                             </svg>
-                            Type User ID or Password above
+                            <span data-i18n="emptyHint">Type User ID or Password above</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Action Buttons: Download & Copy Payload -->
+                <!-- Action Buttons -->
                 <div class="grid grid-cols-2 gap-3 mt-4">
-                    <button id="downloadBtn" disabled 
+                    <button id="downloadBtn" disabled
                         class="flex items-center justify-center gap-2 py-2.5 px-4 bg-slate-100 text-slate-400 rounded-xl text-xs font-semibold cursor-not-allowed transition-all duration-200 hover:bg-slate-200">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                         </svg>
-                        Download PNG
+                        <span data-i18n="downloadBtn">Download PNG</span>
                     </button>
-                    
-                    <button id="copyBtn" disabled 
+
+                    <button id="copyBtn" disabled
                         class="flex items-center justify-center gap-2 py-2.5 px-4 bg-slate-100 text-slate-400 rounded-xl text-xs font-semibold cursor-not-allowed transition-all duration-200 hover:bg-slate-200">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
                         </svg>
-                        Copy String
+                        <span data-i18n="copyBtn">Copy String</span>
                     </button>
                 </div>
 
                 <div class="mt-4 p-3 bg-blue-50/70 border border-blue-100 rounded-xl text-center">
-                    <p class="text-xs text-blue-700 font-medium">
+                    <p data-i18n="formatTitle" class="text-xs text-blue-700 font-medium">
                         Scanner Output Format:
                     </p>
-                    <code class="text-[11px] text-blue-900 font-mono bg-blue-100/60 px-2 py-0.5 rounded mt-1 inline-block">
+                    <code data-i18n="formatCode" class="text-[11px] text-blue-900 font-mono bg-blue-100/60 px-2 py-0.5 rounded mt-1 inline-block">
                         [ID] + \t (TAB) + [Password] + \n (ENTER)
                     </code>
                 </div>
@@ -164,39 +170,184 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // DOM Elements
-            const idInput = document.getElementById('idInput');
-            const passwordInput = document.getElementById('passwordInput');
+
+            /* =========================================================
+               1. i18n dictionary
+               ========================================================= */
+            const I18N = {
+                en: {
+                    pageTitle:        "Auto-Login QR Generator",
+                    headerTitle:      "Quick Login QR",
+                    headerSubtitle:   "Generate scanner-ready credentials",
+                    labelUserId:      "User ID",
+                    placeholderUserId:"Enter User ID",
+                    labelPassword:    "Password",
+                    placeholderPassword: "Enter Password",
+                    togglePassword:   "Toggle password visibility",
+                    qrPreviewLabel:   "QR Code Preview",
+                    charCount:        "{n} chars",
+                    emptyHint:        "Type User ID or Password above",
+                    downloadBtn:      "Download PNG",
+                    copyBtn:          "Copy String",
+                    formatTitle:      "Scanner Output Format:",
+                    formatCode:       "[ID] + \\t (TAB) + [Password] + \\n (ENTER)",
+                    toastDownloaded:  "QR code downloaded successfully!",
+                    toastDownloadFailed: "Failed to generate image download.",
+                    toastCopied:      "Formatted string copied with Tab & Enter!",
+                    toastCopyFailed:  "Unable to copy string.",
+                    toastCopyError:   "Error copying text."
+                },
+                zh: {
+                    pageTitle:        "自動登入 QR Code 產生器",
+                    headerTitle:      "快速登入 QR Code",
+                    headerSubtitle:   "產生可掃描的登入憑證",
+                    labelUserId:      "使用者 ID",
+                    placeholderUserId:"請輸入使用者 ID",
+                    labelPassword:    "密碼",
+                    placeholderPassword: "請輸入密碼",
+                    togglePassword:   "顯示 / 隱藏密碼",
+                    qrPreviewLabel:   "QR Code 預覽",
+                    charCount:        "{n} 個字元",
+                    emptyHint:        "請在上方輸入使用者 ID 或密碼",
+                    downloadBtn:      "下載 PNG",
+                    copyBtn:          "複製字串",
+                    formatTitle:      "掃描輸出格式：",
+                    formatCode:       "[ID] + \\t (TAB) + [密碼] + \\n (ENTER)",
+                    toastDownloaded:  "QR Code 已成功下載！",
+                    toastDownloadFailed: "圖片下載產生失敗。",
+                    toastCopied:      "已複製含 Tab 與 Enter 的字串！",
+                    toastCopyFailed:  "無法複製字串。",
+                    toastCopyError:   "複製文字時發生錯誤。"
+                }
+            };
+
+            /* =========================================================
+               2. DOM Elements
+               ========================================================= */
+            const idInput           = document.getElementById('idInput');
+            const passwordInput     = document.getElementById('passwordInput');
             const togglePasswordBtn = document.getElementById('togglePasswordBtn');
-            const eyeOpenIcon = document.getElementById('eyeOpen');
-            const eyeClosedIcon = document.getElementById('eyeClosed');
-            const qrContainer = document.getElementById('qrcode');
-            const qrPlaceholder = document.getElementById('qrPlaceholder');
-            const charCount = document.getElementById('charCount');
-            const downloadBtn = document.getElementById('downloadBtn');
-            const copyBtn = document.getElementById('copyBtn');
-            const toast = document.getElementById('toast');
-            const toastMsg = document.getElementById('toastMsg');
-            
+            const eyeOpenIcon       = document.getElementById('eyeOpen');
+            const eyeClosedIcon     = document.getElementById('eyeClosed');
+            const qrContainer       = document.getElementById('qrcode');
+            const qrPlaceholder     = document.getElementById('qrPlaceholder');
+            const charCount         = document.getElementById('charCount');
+            const downloadBtn       = document.getElementById('downloadBtn');
+            const copyBtn           = document.getElementById('copyBtn');
+            const toast             = document.getElementById('toast');
+            const toastMsg          = document.getElementById('toastMsg');
+            const langToggleBtn     = document.getElementById('langToggle');
+            const langZhEl          = document.getElementById('langZh');
+            const langEnEl          = document.getElementById('langEn');
+
+            /* Button class presets */
+            const BTN_DISABLED = "flex items-center justify-center gap-2 py-2.5 px-4 bg-slate-100 text-slate-400 rounded-xl text-xs font-semibold cursor-not-allowed transition-all duration-200";
+            const BTN_DOWNLOAD = "flex items-center justify-center gap-2 py-2.5 px-4 bg-blue-600 text-white hover:bg-blue-700 active:scale-95 rounded-xl text-xs font-semibold cursor-pointer shadow-sm transition-all duration-200";
+            const BTN_COPY     = "flex items-center justify-center gap-2 py-2.5 px-4 bg-indigo-600 text-white hover:bg-indigo-700 active:scale-95 rounded-xl text-xs font-semibold cursor-pointer shadow-sm transition-all duration-200";
+
+            /* State */
             let qrcodeInstance = null;
             let currentPayload = "";
+            let lang = "en";
+            let dict = I18N.en;
 
-            // Helper: Show Toast Notification
+            /* =========================================================
+               3. Language handling
+               ========================================================= */
+
+            /* The ONLY thing persisted across reloads is the language choice. */
+            function loadSavedLanguage() {
+                try {
+                    const saved = localStorage.getItem('qr-lang');
+                    if (saved === 'zh' || saved === 'en') return saved;
+                } catch (e) { /* ignore */ }
+                /* Default on first visit: English (regardless of browser locale) */
+                return 'en';
+            }
+
+            function saveLanguage(l) {
+                try { localStorage.setItem('qr-lang', l); } catch (e) { /* ignore */ }
+            }
+
+            /* Emphasize the active language inside the [中/ENG] toggle */
+            function updateLangButton() {
+                if (lang === 'zh') {
+                    langZhEl.style.fontWeight = '800';
+                    langZhEl.style.opacity    = '1';
+                    langEnEl.style.fontWeight = '400';
+                    langEnEl.style.opacity    = '0.55';
+                } else {
+                    langZhEl.style.fontWeight = '400';
+                    langZhEl.style.opacity    = '0.55';
+                    langEnEl.style.fontWeight = '800';
+                    langEnEl.style.opacity    = '1';
+                }
+            }
+
+            function applyLanguage(newLang, persist) {
+                lang = (newLang === 'zh') ? 'zh' : 'en';
+                dict = I18N[lang];
+
+                /* <html lang> */
+                document.documentElement.lang = (lang === 'zh') ? 'zh-Hant' : 'en';
+
+                /* Document title */
+                document.title = dict.pageTitle;
+
+                /* Text content */
+                document.querySelectorAll('[data-i18n]').forEach(el => {
+                    const key = el.getAttribute('data-i18n');
+                    if (dict[key] != null) el.textContent = dict[key];
+                });
+
+                /* Placeholders */
+                document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                    const key = el.getAttribute('data-i18n-placeholder');
+                    if (dict[key] != null) el.placeholder = dict[key];
+                });
+
+                /* Titles (tooltips) */
+                document.querySelectorAll('[data-i18n-title]').forEach(el => {
+                    const key = el.getAttribute('data-i18n-title');
+                    if (dict[key] != null) el.title = dict[key];
+                });
+
+                /* Toggle button emphasis */
+                updateLangButton();
+
+                /* Re-render char count with the new unit */
+                renderCharCount();
+
+                /* Persist ONLY if the user explicitly switched */
+                if (persist) saveLanguage(lang);
+            }
+
+            langToggleBtn.addEventListener('click', () => {
+                applyLanguage(lang === 'en' ? 'zh' : 'en', true);
+            });
+
+            /* =========================================================
+               4. Toast helper
+               ========================================================= */
+            let toastTimer = null;
             function showToast(message) {
                 toastMsg.textContent = message;
                 toast.classList.remove('opacity-0', 'pointer-events-none');
                 toast.classList.add('opacity-100');
-                
-                setTimeout(() => {
+
+                clearTimeout(toastTimer);
+                toastTimer = setTimeout(() => {
                     toast.classList.remove('opacity-100');
                     toast.classList.add('opacity-0', 'pointer-events-none');
                 }, 2200);
             }
 
-            // Single Custom Password Visibility Toggle
+            /* =========================================================
+               5. Password visibility toggle
+               ========================================================= */
             togglePasswordBtn.addEventListener('click', () => {
                 const isPasswordHidden = passwordInput.type === 'password';
-                
+
                 if (isPasswordHidden) {
                     passwordInput.type = 'text';
                     eyeOpenIcon.classList.remove('hidden');
@@ -206,63 +357,70 @@
                     eyeOpenIcon.classList.add('hidden');
                     eyeClosedIcon.classList.remove('hidden');
                 }
-                
-                // Refocus input smoothly
+
                 passwordInput.focus();
             });
 
-            // Update QR Code Real-Time
+            /* =========================================================
+               6. Character counter
+               ========================================================= */
+            function renderCharCount() {
+                charCount.textContent = dict.charCount.replace('{n}', currentPayload.length);
+            }
+
+            /* =========================================================
+               7. QR code rendering
+               ========================================================= */
             function updateQRCode() {
-                const idVal = idInput.value;
+                const idVal   = idInput.value;
                 const passVal = passwordInput.value;
 
-                // Empty state check
+                /* Empty state */
                 if (!idVal && !passVal) {
                     qrContainer.innerHTML = '';
                     qrContainer.appendChild(qrPlaceholder);
-                    charCount.textContent = '0 chars';
                     currentPayload = "";
-                    
-                    // Disable buttons
+                    renderCharCount();
+
                     downloadBtn.disabled = true;
                     copyBtn.disabled = true;
-                    downloadBtn.className = "flex items-center justify-center gap-2 py-2.5 px-4 bg-slate-100 text-slate-400 rounded-xl text-xs font-semibold cursor-not-allowed transition-all duration-200";
-                    copyBtn.className = "flex items-center justify-center gap-2 py-2.5 px-4 bg-slate-100 text-slate-400 rounded-xl text-xs font-semibold cursor-not-allowed transition-all duration-200";
+                    downloadBtn.className = BTN_DISABLED;
+                    copyBtn.className = BTN_DISABLED;
                     return;
                 }
 
-                // Format string with TAB (\t) and ENTER (\n) escape characters
+                /* Format: [ID] + TAB + [Password] + ENTER */
                 currentPayload = `${idVal}\t${passVal}\n`;
-                charCount.textContent = `${currentPayload.length} chars`;
+                renderCharCount();
 
-                // Reset container before rendering
-                qrContainer.innerHTML = ''; 
+                /* Reset container before rendering */
+                qrContainer.innerHTML = '';
 
-                // Generate QR Code with qrcode.js
+                /* Generate QR Code */
                 qrcodeInstance = new QRCode(qrContainer, {
                     text: currentPayload,
                     width: 190,
                     height: 190,
-                    colorDark : "#0f172a",
-                    colorLight : "#ffffff",
-                    correctLevel : QRCode.CorrectLevel.M
+                    colorDark: "#0f172a",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.M
                 });
 
-                // Enable action buttons
                 downloadBtn.disabled = false;
                 copyBtn.disabled = false;
-                downloadBtn.className = "flex items-center justify-center gap-2 py-2.5 px-4 bg-blue-600 text-white hover:bg-blue-700 active:scale-95 rounded-xl text-xs font-semibold cursor-pointer shadow-sm transition-all duration-200";
-                copyBtn.className = "flex items-center justify-center gap-2 py-2.5 px-4 bg-indigo-600 text-white hover:bg-indigo-700 active:scale-95 rounded-xl text-xs font-semibold cursor-pointer shadow-sm transition-all duration-200";
+                downloadBtn.className = BTN_DOWNLOAD;
+                copyBtn.className = BTN_COPY;
             }
 
-            // Download QR Code as PNG
+            /* =========================================================
+               8. Download QR as PNG
+               ========================================================= */
             downloadBtn.addEventListener('click', () => {
                 if (!currentPayload) return;
 
-                // Find generated canvas or image tag inside qrContainer
-                const imgElement = qrContainer.querySelector('img');
+                const imgElement    = qrContainer.querySelector('img');
                 const canvasElement = qrContainer.querySelector('canvas');
-                
+
                 let imageSrc = "";
                 if (canvasElement) {
                     imageSrc = canvasElement.toDataURL("image/png");
@@ -277,19 +435,20 @@
                     document.body.appendChild(downloadLink);
                     downloadLink.click();
                     document.body.removeChild(downloadLink);
-                    showToast('QR code downloaded successfully!');
+                    showToast(dict.toastDownloaded);
                 } else {
-                    showToast('Failed to generate image download.');
+                    showToast(dict.toastDownloadFailed);
                 }
             });
 
-            // Copy Raw Formatted Payload to Clipboard (using execCommand for iframe compatibility)
+            /* =========================================================
+               9. Copy raw payload
+               ========================================================= */
             copyBtn.addEventListener('click', () => {
                 if (!currentPayload) return;
 
                 const textArea = document.createElement('textarea');
                 textArea.value = currentPayload;
-                // Avoid scrolling to bottom
                 textArea.style.top = '0';
                 textArea.style.left = '0';
                 textArea.style.position = 'fixed';
@@ -299,23 +458,29 @@
 
                 try {
                     const successful = document.execCommand('copy');
-                    if (successful) {
-                        showToast('Formatted string copied with Tab & Enter!');
-                    } else {
-                        showToast('Unable to copy string.');
-                    }
+                    showToast(successful ? dict.toastCopied : dict.toastCopyFailed);
                 } catch (err) {
-                    showToast('Error copying text.');
+                    showToast(dict.toastCopyError);
                 }
 
                 document.body.removeChild(textArea);
             });
 
-            // Attach input listeners for instant rendering
+            /* =========================================================
+               10. Bindings & init
+               ========================================================= */
             idInput.addEventListener('input', updateQRCode);
             passwordInput.addEventListener('input', updateQRCode);
 
-            // Initial trigger
+            /* No input memory: start every reload with empty fields.
+               (Also reinforced via autocomplete="off" / "new-password" above.) */
+            idInput.value = '';
+            passwordInput.value = '';
+
+            /* Initial language: English on first visit, then last chosen language. */
+            applyLanguage(loadSavedLanguage(), false);
+
+            /* Initial render (empty state) */
             updateQRCode();
         });
     </script>
